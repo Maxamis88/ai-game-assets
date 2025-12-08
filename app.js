@@ -1,5 +1,5 @@
 // Replace YOUR_VERCEL_URL with your deployed URL
-const API_URL = 'https://YOUR_VERCEL_URL.vercel.app/api/generate';
+const API_URL = 'https://vercel.com/deployment/redirect?host=ai-game-assets-uuxm8kvz6-jeremy-s-projects-d9e16be7.vercel.app/api/generate';
 
 const sizePrompts = {
   8: ', 8x8 pixel art, tiny retro sprite, 1-bit',
