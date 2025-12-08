@@ -62,3 +62,36 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.drawImage(img, 0, 0, w, h);
 
         const jsonData = {
+          meta: { app: 'AI Game Assets', format: 'RGBA8888', size: { w: size, h: size }, scale: '1' },
+          frames: [{
+            filename: `${size}x${size}-sprite.png`,
+            frame: { x: 0, y: 0, w: size, h: size },
+            sourceSize: { w: size, h: size }
+          }]
+        };
+
+        downloads.innerHTML = `
+          <a href="${previewCanvas.toDataURL('image/png')}" download="${size}x${size}-gdevelop.png" class="download-btn">
+            🖼️ ${size}x${size} PNG (GDevelop)
+          </a>
+          <a href="${URL.createObjectURL(new Blob([JSON.stringify(jsonData,null,2)],{type:'application/json'}))}"
+             download="${size}x${size}-gdevelop.json" class="download-btn">
+            📄 ${size}x${size} JSON
+          </a>
+        `;
+
+        status.textContent = `✅ ${size}x${size} sprite ready!`;
+        previewContainer.style.display = 'block';
+        URL.revokeObjectURL(imgUrl);
+      };
+
+      img.src = imgUrl;
+    } catch (err) {
+      status.textContent = `❌ Error: ${err.message}`;
+      console.error(err);
+    }
+
+    generateBtn.disabled = false;
+    generateBtn.textContent = '🎨 Generate Sprite';
+  });
+});
