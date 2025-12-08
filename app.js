@@ -1,6 +1,4 @@
-'''javascript
 const API_URL = 'https://ai-game-assets-api.vercel.app/api/generate';
-
 const sizePrompts = {
   8: ', 8x8 pixel art, tiny retro sprite, 1-bit',
   16: ', 16x16 pixel art, gameboy sprite, 4-color',
