@@ -1,3 +1,4 @@
+'''javascript
 const API_URL = 'https://ai-game-assets-api.vercel.app/api/generate';
 
 const sizePrompts = {
