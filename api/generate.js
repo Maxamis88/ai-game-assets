@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
   try {
     const hfResponse = await fetch(
-      'https://router.huggingface.co/models/nerijs/pixel-art-xl',
+      'https://router.huggingface.co/nerijs/pixel-art-xl-v2.1',
       {
         method: 'POST',
         headers: {
