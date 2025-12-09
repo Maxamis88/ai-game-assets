@@ -20,14 +20,13 @@ export default async function handler(req, res) {
 
   try {
     const hfResponse = await fetch(
-      'https://router.huggingface.co/inference/nerijs/pixel-art-xl',
+      'https://router.huggingface.co/models/nerijs/pixel-art-xl',
       {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${process.env.HF_TOKEN}`,
-          'Content-Type': 'application/json',
-          'x-use-cache': 'false'
-        },
+          'Content-Type': 'application/json' 
+      },
         body: JSON.stringify({
           inputs: prompt,
           parameters: {
