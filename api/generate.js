@@ -19,37 +19,63 @@ export default async function handler(req, res) {
   }
 
   try {
-    const hfResponse = await fetch(
-      'https://router.huggingface.co/pixelparty/pixel-psrty-xl',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
-          'Content-Type': 'application/json' 
-      },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            width: size,
-            height: size,
-            num_inference_steps: 20,
-            guidance_scale: 7.5
-          }
-        })
-      }
-    );
-
-    if (!hfResponse.ok) {
-      const text = await hfResponse.text();
-      throw new Error(`HF API ${hfResponse.status}: ${text}`);
+    const token = process.env.REPLICATE_API_TOKEN;
+    if (!token) {
+      throw new Error('Missing REPLICATE_API_TOKEN');
     }
 
-    const blob = await hfResponse.blob();
-    const buffer = await blob.arrayBuffer();
+    // Replicate model: SDXL pixel-art style (example)
+    const replicateResponse = await fetch('https://api.replicate.com/v1/predictions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        version: 'e12a4f76c9a54fda9df88e3e0eb4fd94', // example SDXL pixel art model version
+        input: {
+          prompt,
+          width: size,
+          height: size
+        }
+      })
+    });
+
+    if (!replicateResponse.ok) {
+      const text = await replicateResponse.text();
+      throw new Error(`Replicate ${replicateResponse.status}: ${text}`);
+    }
+
+    const prediction = await replicateResponse.json();
+
+    // Poll until completed
+    let result = prediction;
+    const endpoint = `https://api.replicate.com/v1/predictions/${prediction.id}`;
+
+    while (result.status === 'starting' || result.status === 'processing') {
+      await new Promise(r => setTimeout(r, 2000));
+      const pollRes = await fetch(endpoint, {
+        headers: { Authorization: `Token ${token}` }
+      });
+      result = await pollRes.json();
+    }
+
+    if (result.status !== 'succeeded' || !result.output || !result.output[0]) {
+      throw new Error(`Generation failed: ${JSON.stringify(result)}`);
+    }
+
+    const imageUrl = result.output[0];
+
+    // Fetch image and proxy it back as PNG
+    const imgRes = await fetch(imageUrl);
+    if (!imgRes.ok) {
+      throw new Error(`Image fetch failed: ${imgRes.status}`);
+    }
+    const buffer = Buffer.from(await imgRes.arrayBuffer());
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'image/png');
-    res.send(Buffer.from(buffer));
+    res.send(buffer);
   } catch (error) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.status(500).json({ error: error.message });
