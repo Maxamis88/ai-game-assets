@@ -19,16 +19,16 @@ export default async function handler(req, res) {
   }
 
   try {
-    const token = process.env.REPLICATE_API_TOKEN;
+    const token = process.env.REPLICATE_API_TOKEN1;
     if (!token) {
-      throw new Error('Missing REPLICATE_API_TOKEN');
+      throw new Error('Missing REPLICATE_API_TOKEN1');
     }
 
     // Replicate model: SDXL pixel-art style (example)
     const replicateResponse = await fetch('https://api.replicate.com/v1/predictions', {
       method: 'POST',
       headers: {
-        Authorization: `Token ${process.env.REPLICATE_API_TOKEN}`,
+        Authorization: `Token ${process.env.REPLICATE_API_TOKEN1}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
