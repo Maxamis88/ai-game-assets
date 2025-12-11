@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        version: 'e12a4f76c9a54fda9df88e3e0eb4fd94', // example SDXL pixel art model version
+        version: 'stability-ai/sdx1', // example SDXL pixel art model version
         input: {
           prompt,
           width: size,
